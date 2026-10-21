@@ -45,8 +45,7 @@ nav button{flex:1;max-width:170px;border:0;background:none;color:#666;font-size:
 /*
   FRONTEND / API CONTRACT
   This page needs a customer-focused Google Apps Script backend.
-  Keep API URL configured below. Do not point it at the driver API unless
-  that script has been updated to implement actions stickerState and openSticker.
+  Keep API URL configured below. 
 */
 const API = 'https://script.google.com/macros/s/AKfycbxHtgeOFxl44EhFhiUGOS_l79C_psfyTHnniID4r2gwRySgkXf_fJwdNiYmVswjHdH1/exec';
 const LANGS = {
@@ -75,7 +74,8 @@ async function api(body){
 }
 function loginView(value='',error=''){
  app.innerHTML=`<section class="login">${langs()}${logo()}<h1>${t('title')}</h1><p>${t('login')}</p><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08X XXX XXXX" value="${esc(value)}"><div class="err" id="err">${esc(error)}</div><button class="btn" id="go">${t('go')}</button><div class="hint">${t('tag')}</div></section>`;
- const go=async()=>{let pin=phoneNorm($('#phone').value);if(!/^66\\d{8,10}$/.test(pin)){$('#err').textContent=t('phoneError');return}session={pin};$('#go').disabled=true;try{let j=await api({a:'stickerState'});if(j.choose){cityView(j.choose);return}if(j.needId){throw new Error('This backend returned a driver-only ID flow. Customer authentication must use phone only.')}session.city=j.city||'';state=j;localStorage.setItem('maxim-sticker-session',JSON.stringify(session));render()}catch(e){$('#err').textContent=e.message||t('server')}finally{if($('#go'))$('#go').disabled=false}};
+ // ИСПРАВЛЕНО: убран лишний обратный слэш в регулярном выражении (было /^66\\d{8,10}$/, стало /^66\d{8,10}$/)
+ const go=async()=>{let pin=phoneNorm($('#phone').value);if(!/^66\d{8,10}$/.test(pin)){$('#err').textContent=t('phoneError');return}session={pin};$('#go').disabled=true;try{let j=await api({a:'stickerState'});if(j.choose){cityView(j.choose);return}if(j.needId){throw new Error('This backend returned a driver-only ID flow. Customer authentication must use phone only.')}session.city=j.city||'';state=j;localStorage.setItem('maxim-sticker-session',JSON.stringify(session));render()}catch(e){$('#err').textContent=e.message||t('server')}finally{if($('#go'))$('#go').disabled=false}};
  $('#go').onclick=go;$('#phone').onkeydown=e=>{if(e.key==='Enter')go()};bindLang()
 }
 function cityView(cities){app.innerHTML=`<section class="login">${logo()}<h1>${t('go')}</h1>${cities.map(c=>`<button class="btn" data-city="${esc(c)}">${esc(c)}</button>`).join('')}</section>`;app.querySelectorAll('[data-city]').forEach(b=>b.onclick=async()=>{session.city=b.dataset.city;try{state=await api({a:'stickerState'});localStorage.setItem('maxim-sticker-session',JSON.stringify(session));render()}catch(e){loginView('',e.message)}})}
@@ -115,4 +115,5 @@ function showPromo(s){
  loginView()
 })();
 </script>
-</body></html>
+</body>
+</html>
