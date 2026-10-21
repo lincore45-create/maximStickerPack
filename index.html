@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffd91a">
+<title>Maxim Sticker Collection</title>
+<style>
+:root{--yellow:#ffd91a;--ink:#202126;--muted:#6b7280;--paper:#fff;--bg:#f5f5f2;--red:#ed1c24;--green:#159447}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;padding-bottom:86px}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.5}
+#app{max-width:520px;margin:auto;min-height:100vh}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-size:27px;font-weight:900;letter-spacing:-1.8px}.logo .o{color:var(--red)}
+.lang{display:flex;background:#ffffffb8;padding:3px;border-radius:24px;gap:2px}.lang button{border:0;background:transparent;border-radius:20px;padding:6px 9px;font-size:11px;font-weight:800}.lang button.on{background:var(--ink);color:white}
+header{padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 48px;background:linear-gradient(145deg,#59c7ef,#c9efff 65%,#fff);border-radius:0 0 30px 30px}
+header h1{font-size:27px;line-height:1.15;margin:24px 0 8px;max-width:370px}header p{margin:0;color:#354d5b;font-size:14px}
+.card{background:white;border-radius:22px;padding:17px;margin:12px;box-shadow:0 3px 14px #0000000a}.hero{margin-top:-31px;position:relative}
+.stats{display:flex;align-items:center;justify-content:space-between;gap:12px}.statnum{font-size:27px;font-weight:900}.muted{color:var(--muted);font-size:13px}
+.progress{height:8px;background:#ececf0;border-radius:8px;overflow:hidden;margin-top:12px}.progress i{display:block;height:100%;background:var(--yellow);border-radius:8px;transition:width .35s}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 12px}
+.sticker{border:0;background:white;border-radius:20px;overflow:hidden;text-align:left;padding:0;box-shadow:0 3px 12px #0000000c;position:relative;color:var(--ink);min-width:0}
+.sticker img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:#f3f3f3}
+.sticker .meta{padding:10px 11px 12px}.sticker strong{display:block;font-size:14px;line-height:1.25;min-height:35px}.sticker .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.sticker.locked img{filter:grayscale(1);opacity:.36}.sticker.locked:after{content:"🔒";position:absolute;top:10px;right:10px;background:#ffffffeb;border-radius:20px;padding:5px 7px;font-size:15px}
+.sticker.opened{outline:2px solid var(--yellow)}.stamp{position:absolute;top:10px;left:10px;background:var(--yellow);border-radius:20px;padding:5px 8px;font-size:11px;font-weight:900}
+.btn{width:100%;border:0;border-radius:15px;padding:14px 16px;background:var(--yellow);color:var(--ink);font-weight:800;font-size:15px;margin-top:12px}.btn.dark{background:var(--ink);color:white}.btn.secondary{background:#f0f0f3}
+.login{margin:12vh 16px 0;padding:25px 22px;background:#ffffffed;backdrop-filter:blur(8px);border-radius:25px;box-shadow:0 8px 30px #00000012;text-align:center}
+.login .logo{font-size:34px}.login h1{font-size:25px;margin:20px 0 5px}.login p{color:var(--muted);font-size:14px}
+input{width:100%;border:2px solid #e1e1e6;border-radius:14px;padding:14px 12px;margin-top:16px;font-size:20px;text-align:center;outline:none}input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px #ffd91a45}
+.err{color:#d52638;min-height:20px;font-size:13px;margin-top:8px}.hint{background:#fff7d7;padding:12px;border-radius:14px;font-size:13px;color:#755d00;margin-top:12px}
+nav{position:fixed;z-index:10;bottom:0;left:0;right:0;display:flex;justify-content:center;background:#fffffff2;border-top:1px solid #e8e8e8;padding:9px 0 calc(env(safe-area-inset-bottom,0px) + 8px);backdrop-filter:blur(10px)}
+nav button{flex:1;max-width:170px;border:0;background:none;color:#666;font-size:11px;font-weight:600}nav button span{display:block;font-size:22px;margin-bottom:2px}nav button.on{color:#bd8900}
+.toast{position:fixed;z-index:30;bottom:100px;left:50%;transform:translateX(-50%);background:#202126;color:white;padding:11px 16px;border-radius:24px;max-width:calc(100% - 32px);font-size:13px;box-shadow:0 4px 18px #0003}
+.modal{position:fixed;inset:0;z-index:20;background:#1119;display:flex;align-items:center;justify-content:center;padding:20px}.modalbox{max-width:350px;width:100%;background:white;border-radius:24px;padding:22px;text-align:center;box-shadow:0 10px 35px #0003}.modalbox img{width:170px;max-width:65%;border-radius:18px}.modalbox h2{margin:12px 0 5px}.code{font-size:25px;font-weight:900;letter-spacing:1px;background:#fff5bf;border:1px dashed #c7a000;border-radius:12px;padding:12px;word-break:break-word;margin:14px 0}
+#loader{position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#222,transparent);background-size:40% 100%;animation:load 1s linear infinite;opacity:0;z-index:50;pointer-events:none}#loader.on{opacity:1}@keyframes load{to{background-position:140% 0}}
+.out{display:block;margin:14px auto;border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline}
+.empty{text-align:center;padding:24px 8px;color:var(--muted)}
+@media(min-width:540px){body{padding-top:16px}header{border-radius:30px 30px 30px 30px}}
+</style>
+</head>
+<body>
+<div id="loader"></div><main id="app"></main>
+<script>
+/*
+  FRONTEND / API CONTRACT
+  This page needs a customer-focused Google Apps Script backend.
+  Keep API URL configured below. Do not point it at the driver API unless
+  that script has been updated to implement actions stickerState and openSticker.
+*/
+const API = 'https://script.google.com/macros/s/AKfycbxHtgeOFxl44EhFhiUGOS_l79C_psfyTHnniID4r2gwRySgkXf_fJwdNiYmVswjHdH1/exec';
+const LANGS = {
+ th:{title:'Maxim Sticker Collection',tag:'สะสมสติกเกอร์ รับส่วนลด 50 บาท!',login:'เข้าสู่ระบบด้วยเบอร์โทรศัพท์ Maxim',phone:'เบอร์โทรศัพท์',go:'เข้าสู่ระบบ',collection:'คอลเลกชันของฉัน',progress:'สติกเกอร์ที่สะสมแล้ว',of:'จาก',open:'เปิดสติกเกอร์',opened:'ได้รับแล้ว',locked:'ยังไม่ปลดล็อก',available:'พร้อมเปิด!',orders:'ออเดอร์',need:'ทำตามเงื่อนไขเพื่อปลดล็อกสติกเกอร์นี้',promo:'โค้ดส่วนลดของคุณ',copy:'คัดลอกโค้ด',copied:'คัดลอกแล้ว',close:'ปิด',logout:'ออกจากระบบ',home:'คอลเลกชัน',rules:'วิธีสะสม',rulesTitle:'วิธีสะสมสติกเกอร์',rulesText:'ทำตามเงื่อนไขของแคมเปญเพื่อปลดล็อกสติกเกอร์ เมื่อเปิดสติกเกอร์แล้ว คุณจะได้รับโค้ดส่วนลด 50 บาทหนึ่งโค้ดต่อหนึ่งสติกเกอร์',server:'ไม่สามารถเชื่อมต่อระบบได้ โปรดลองอีกครั้ง',phoneError:'กรุณาตรวจสอบเบอร์โทรศัพท์',noStickers:'ยังไม่มีสติกเกอร์ในแคมเปญนี้',demo:'API ยังไม่ได้ตั้งค่า กรุณาใส่ URL ของ Google Apps Script สำหรับลูกค้า',lockedReason:'ทำตามเงื่อนไขแคมเปญเพื่อปลดล็อก',codeHelp:'ใช้โค้ดนี้ในแอป Maxim ตามเงื่อนไขของโปรโมชัน'},
+ en:{title:'Maxim Sticker Collection',tag:'Collect stickers. Get ฿50 off!',login:'Sign in with your Maxim phone number',phone:'Phone number',go:'Continue',collection:'My collection',progress:'Stickers collected',of:'of',open:'Open sticker',opened:'Collected',locked:'Locked',available:'Ready to open!',orders:'orders',need:'Complete the campaign condition to unlock this sticker',promo:'Your promo code',copy:'Copy code',copied:'Code copied',close:'Close',logout:'Log out',home:'Collection',rules:'How to collect',rulesTitle:'How to collect stickers',rulesText:'Complete the campaign conditions to unlock a sticker. Each opened sticker gives you one unique ฿50 promo code.',server:'Could not connect. Please try again.',phoneError:'Please check your phone number',noStickers:'No stickers are configured for this campaign yet',demo:'API is not configured. Add the customer Google Apps Script URL.',lockedReason:'Complete the campaign condition to unlock',codeHelp:'Use this code in the Maxim app according to the promotion terms'},
+ ru:{title:'Коллекция стикеров Maxim',tag:'Собирайте стикеры и получайте скидку 50 ฿!',login:'Вход по номеру телефона Maxim',phone:'Номер телефона',go:'Продолжить',collection:'Моя коллекция',progress:'Собрано стикеров',of:'из',open:'Открыть стикер',opened:'Получен',locked:'Пока закрыт',available:'Можно открыть!',orders:'заказов',need:'Выполните условие акции, чтобы открыть стикер',promo:'Ваш промокод',copy:'Скопировать код',copied:'Код скопирован',close:'Закрыть',logout:'Выйти',home:'Коллекция',rules:'Как собирать',rulesTitle:'Как собирать стикеры',rulesText:'Выполняйте условия акции, чтобы открывать стикеры. За каждый открытый стикер выдаётся один уникальный промокод на скидку 50 THB.',server:'Не удалось подключиться к серверу. Попробуйте ещё раз.',phoneError:'Проверьте номер телефона',noStickers:'Для этой акции пока не настроены стикеры',demo:'API не настроен. Укажите URL клиентского Google Apps Script.',lockedReason:'Выполните условие акции, чтобы открыть стикер',codeHelp:'Используйте код в приложении Maxim согласно условиям акции'}
+};
+const $=s=>document.querySelector(s), app=$('#app');
+let lang=localStorage.getItem('maxim-sticker-lang')||'th', session=null, state=null, tab='home', busy=false;
+const t=k=>(LANGS[lang]||LANGS.th)[k]||LANGS.en[k]||k;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function logo(){return '<div class="logo">m<span class="o">a</span>xim</div>'}
+function langs(){return '<div class="lang">'+['th','en','ru'].map(l=>`<button class="${lang===l?'on':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')+'</div>'}
+function bindLang(){document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;localStorage.setItem('maxim-sticker-lang',lang);state?render():loginView($('#phone')?.value||'')})}
+function phoneNorm(s){let d=String(s||'').replace(/\D/g,'');if(d.startsWith('0066'))d=d.slice(2);if(d.startsWith('660'))d='66'+d.slice(3);else if(d.startsWith('0'))d='66'+d.slice(1);else if(d.length===9&&/^[689]/.test(d))d='66'+d;return d}
+function loading(v){$('#loader').classList.toggle('on',v)}
+function toast(s){let e=document.createElement('div');e.className='toast';e.textContent=s;document.body.append(e);setTimeout(()=>e.remove(),2600)}
+async function api(body){
+ if(!API||API.includes('PASTE_CUSTOMER_'))throw new Error(t('demo'));
+ loading(true);
+ try{
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...session,...body})});
+  const raw=await r.text();let j;try{j=JSON.parse(raw)}catch{throw new Error(t('server'))}
+  if(!r.ok||j.error)throw new Error(j.error||t('server'));return j;
+ }finally{loading(false)}
+}
+function loginView(value='',error=''){
+ app.innerHTML=`<section class="login">${langs()}${logo()}<h1>${t('title')}</h1><p>${t('login')}</p><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08X XXX XXXX" value="${esc(value)}"><div class="err" id="err">${esc(error)}</div><button class="btn" id="go">${t('go')}</button><div class="hint">${t('tag')}</div></section>`;
+ const go=async()=>{let pin=phoneNorm($('#phone').value);if(!/^66\\d{8,10}$/.test(pin)){$('#err').textContent=t('phoneError');return}session={pin};$('#go').disabled=true;try{let j=await api({a:'stickerState'});if(j.choose){cityView(j.choose);return}if(j.needId){throw new Error('This backend returned a driver-only ID flow. Customer authentication must use phone only.')}session.city=j.city||'';state=j;localStorage.setItem('maxim-sticker-session',JSON.stringify(session));render()}catch(e){$('#err').textContent=e.message||t('server')}finally{if($('#go'))$('#go').disabled=false}};
+ $('#go').onclick=go;$('#phone').onkeydown=e=>{if(e.key==='Enter')go()};bindLang()
+}
+function cityView(cities){app.innerHTML=`<section class="login">${logo()}<h1>${t('go')}</h1>${cities.map(c=>`<button class="btn" data-city="${esc(c)}">${esc(c)}</button>`).join('')}</section>`;app.querySelectorAll('[data-city]').forEach(b=>b.onclick=async()=>{session.city=b.dataset.city;try{state=await api({a:'stickerState'});localStorage.setItem('maxim-sticker-session',JSON.stringify(session));render()}catch(e){loginView('',e.message)}})}
+function getStickers(){return Array.isArray(state?.stickers)?state.stickers:[]}
+function render(){
+ const stickers=getStickers(), count=stickers.filter(s=>s.opened||s.claimed||s.promoCode).length, total=stickers.length;
+ app.innerHTML=`<header><div class="top">${logo()}${langs()}</div><h1>${t('title')}</h1><p>${t('tag')}</p></header>
+ <section class="card hero"><div class="stats"><div><div class="muted">${t('collection')}</div><div class="statnum">${count} <span style="font-size:15px;font-weight:500;color:var(--muted)">${t('of')} ${total}</span></div></div><div style="font-size:38px">🎁</div></div><div class="progress"><i style="width:${total?count/total*100:0}%"></i></div><p class="muted" style="margin-top:8px">${t('progress')}</p></section>
+ ${total?`<div class="grid">${stickers.map((s,i)=>{const opened=!!(s.opened||s.claimed||s.promoCode), unlocked=!!(s.unlocked||s.available||opened);let image=s.image||`stickers/sticker-${String(i+1).padStart(2,'0')}.webp`;return `<button class="sticker ${opened?'opened':''} ${unlocked?'':'locked'}" data-sticker="${esc(s.id??s.key??i)}"><img src="${esc(image)}" alt="${esc(s.title||'Maxim sticker')}" loading="lazy">${opened?'<span class="stamp">✓ '+t('opened')+'</span>':unlocked?'<span class="stamp">'+t('available')+'</span>':''}<div class="meta"><strong>${esc(s.title||`${t('collection')} ${i+1}`)}</strong><div class="sub">${opened?'฿50 · '+t('opened'):unlocked?t('open'):esc(s.conditionText||t('lockedReason'))}</div></div></button>`}).join('')}</div>`:`<section class="card empty">${t('noStickers')}</section>`}
+ ${tab==='rules'?`<section class="card"><h2>${t('rulesTitle')}</h2><p class="muted" style="margin-top:8px">${t('rulesText')}</p></section>`:''}
+ <button class="out" id="logout">${t('logout')}</button>
+ <nav><button class="${tab==='home'?'on':''}" data-tab="home"><span>🧩</span>${t('home')}</button><button class="${tab==='rules'?'on':''}" data-tab="rules"><span>📋</span>${t('rules')}</button></nav>`;
+ bindLang();
+ app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render();scrollTo(0,0)});
+ app.querySelectorAll('[data-sticker]').forEach(b=>b.onclick=()=>openSticker(b.dataset.sticker));
+ $('#logout').onclick=()=>{session=state=null;localStorage.removeItem('maxim-sticker-session');tab='home';loginView()};
+}
+async function openSticker(id){
+ if(busy)return;const sticker=getStickers().find((s,i)=>String(s.id??s.key??i)===String(id));if(!sticker)return;
+ if(sticker.opened||sticker.claimed||sticker.promoCode){showPromo(sticker);return}
+ if(!(sticker.unlocked||sticker.available)){toast(sticker.conditionText||t('lockedReason'));return}
+ busy=true;
+ try{const j=await api({a:'openSticker',stickerId:id});if(j.state)state=j.state;else if(j.stickers)state=j;const updated=getStickers().find((s,i)=>String(s.id??s.key??i)===String(id));render();if(j.promoCode||j.code)showPromo({...updated,promoCode:j.promoCode||j.code});else if(updated)showPromo(updated);else toast(t('server'))}
+ catch(e){toast(e.message||t('server'))}finally{busy=false}
+}
+function showPromo(s){
+ const code=s.promoCode||s.code||s.rewardCode;
+ if(!code){toast(t('server'));return}
+ const image=s.image||'stickers/sticker-01.webp';
+ const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="modalbox"><img src="${esc(image)}" alt=""><h2>${t('promo')}</h2><div class="code">${esc(code)}</div><p class="muted">${t('codeHelp')}</p><button class="btn" id="copy">${t('copy')}</button><button class="btn secondary" id="close">${t('close')}</button></div>`;document.body.append(m);
+ m.querySelector('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(String(code));toast(t('copied'))}catch{const r=document.createRange();r.selectNodeContents(m.querySelector('.code'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast(String(code))}};
+ m.querySelector('#close').onclick=()=>m.remove();m.onclick=e=>{if(e.target===m)m.remove()}
+}
+(async function init(){
+ const saved=localStorage.getItem('maxim-sticker-session');
+ if(saved){try{session=JSON.parse(saved);state=await api({a:'stickerState'});render();return}catch(e){localStorage.removeItem('maxim-sticker-session')}}
+ loginView()
+})();
+</script>
+</body></html>
